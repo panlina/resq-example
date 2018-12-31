@@ -8,22 +8,34 @@ class Body extends React.Component {
 	constructor(props) {
 		super(props);
 		this.r = Memory(data);
+		this.r.config.get = Delayed(this.r.config.get);
 		this.state = {
 			input: 1,
 			schema: 'post',
-			output: undefined
+			$output: undefined
 		};
+		function Delayed(get) {
+			return (id, type, relation) =>
+				get(id, type, relation).delay(1000);
+		}
 	}
 	render() {
 		return <div>
 			<ReactJsonTree data={this.state.input}></ReactJsonTree>
 			<ReactJsonTree data={this.state.schema}></ReactJsonTree>
 			<button onClick={() => {
-				q.resolve(this.state.input)
-					.then(this.r.join(this.state.schema))
-					.then(output => { this.setState({ output }); });
+				var $output = q.resolve(this.state.input)
+					.then(this.r.join(this.state.schema));
+				$output.then(() => { this.forceUpdate(); });
+				this.setState({ $output });
 			}}>go</button>
-			<ReactJsonTree data={this.state.output}></ReactJsonTree>
+			{
+				this.state.$output && (
+					this.state.$output.isFulfilled() ?
+						<ReactJsonTree data={this.state.$output.inspect().value}></ReactJsonTree> :
+						<div>loading..</div>
+				)
+			}
 		</div>;
 	}
 }
