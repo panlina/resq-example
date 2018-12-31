@@ -7,6 +7,19 @@ module.exports = {
 			{ test: /\.js$/, use: 'babel-loader' }
 		]
 	},
+	optimization: {
+		splitChunks: {
+			chunks: 'all',
+			name: 'vendors',
+			cacheGroups: {
+				resq: {
+					test: /[\\/]node_modules[\\/]resq[\\/]/,
+					name: 'resq',
+					enforce: true
+				}
+			}
+		}
+	},
 	externals: {
 		react: 'React',
 		'react-dom': 'ReactDOM',
