@@ -24,7 +24,8 @@ class Body extends React.Component {
 			<ReactJsonTree data={this.state.input} shouldExpandNode={() => true}></ReactJsonTree>
 			<ReactJsonTree data={this.state.schema} shouldExpandNode={() => true}></ReactJsonTree>
 			<button onClick={() => {
-				var $output = q.resolve(this.state.input)
+				var input = clone(this.state.input);
+				var $output = q.resolve(input)
 					.then(this.r.join(this.state.schema));
 				$output.then(() => { this.forceUpdate(); });
 				this.setState({ $output });
@@ -37,6 +38,7 @@ class Body extends React.Component {
 				)
 			}
 		</div>;
+		function clone(object) { return JSON.parse(JSON.stringify(object)); }
 	}
 }
 ReactDOM.render(<Body />, document.getElementById('body'));
