@@ -21,8 +21,8 @@ class Body extends React.Component {
 	}
 	render() {
 		return <div>
-			<ReactJsonTree data={this.state.input} shouldExpandNode={() => true}></ReactJsonTree>
-			<ReactJsonTree data={this.state.schema} shouldExpandNode={() => true}></ReactJsonTree>
+			<ReactJsonTree data={this.state.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+			<ReactJsonTree data={this.state.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
 			<button onClick={() => {
 				var input = clone(this.state.input);
 				var $output = q.resolve(input)
@@ -33,7 +33,7 @@ class Body extends React.Component {
 			{
 				this.state.$output && (
 					this.state.$output.isFulfilled() ?
-						<ReactJsonTree data={this.state.$output.inspect().value} shouldExpandNode={() => true}></ReactJsonTree> :
+						<ReactJsonTree data={this.state.$output.inspect().value} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree> :
 						<div>loading..</div>
 				)
 			}
