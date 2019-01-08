@@ -2,12 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import ReactJsonTree from "react-json-tree";
 import q from "q";
-import Memory from "resq/Memory";
+import Json from "resq/Json";
 import data from "resq/test/data";
 class Body extends React.Component {
 	constructor(props) {
 		super(props);
-		this.r = Memory(data);
+		this.r = Json(data);
 		this.r.config.get = Delayed(this.r.config.get);
 		this.state = {
 			input: 1,
