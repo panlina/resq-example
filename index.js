@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactJsonTree from "react-json-tree";
-import q from "q";
 import Json from "resq/Json";
 import data from "resq/test/data";
 class Body extends React.Component {
@@ -25,17 +24,13 @@ class Body extends React.Component {
 			<ReactJsonTree data={this.state.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
 			<button onClick={() => {
 				var input = clone(this.state.input);
-				var $output = q.resolve(input)
-					.then(this.r.join(this.state.schema));
-				$output.then(() => { this.forceUpdate(); });
+				var $output = this.r.join(this.state.schema)(input);
+				$output.progress(() => { this.forceUpdate(); });
 				this.setState({ $output });
 			}}>go</button>
 			{
-				this.state.$output && (
-					this.state.$output.isFulfilled() ?
-						<ReactJsonTree data={this.state.$output.inspect().value} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree> :
-						<div>loading..</div>
-				)
+				this.state.$output &&
+					<ReactJsonTree data={this.state.$output.$} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
 			}
 		</div>;
 		function clone(object) { return JSON.parse(JSON.stringify(object)); }
