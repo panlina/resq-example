@@ -23,6 +23,7 @@ module.exports = {
 	externals: {
 		react: 'React',
 		'react-dom': 'ReactDOM',
+		'react-json-tree': 'ReactJsonTree',
 		q: 'Q'
 	},
 	devServer: {
