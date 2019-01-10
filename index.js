@@ -1,13 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactJsonTree from "react-json-tree";
-import Json from "resq/Json";
+import resq from "resq";
+import Memory from "resq/Access.Memory";
 import data from "resq/test/data";
 class Body extends React.Component {
 	constructor(props) {
 		super(props);
-		this.r = Json(data);
-		this.r.config.get = Delayed(this.r.config.get);
+		var access = Memory(data, { clone: true });
+		access.get = Delayed(access.get);
+		this.r = resq({ access });
 		this.state = {
 			input: 1,
 			schema: 'post',
