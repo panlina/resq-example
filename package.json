@@ -17,6 +17,6 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "node start.js"
   }
 }
