@@ -12,8 +12,7 @@ class Body extends React.Component {
 		access.get = Delayed(access.get);
 		this.r = resq({ access, reference: Delimited('.') });
 		this.state = {
-			input: 1,
-			schema: 'post',
+			example: Object.keys(example)[0],
 			$output: undefined
 		};
 		function Delayed(get) {
@@ -21,13 +20,18 @@ class Body extends React.Component {
 				get(id, type, relation).delay(1000);
 		}
 	}
+	get input() { return example[this.state.example].input; }
+	get schema() { return example[this.state.example].schema; }
 	render() {
 		return <div>
-			<ReactJsonTree data={this.state.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
-			<ReactJsonTree data={this.state.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+			<select value={this.state.example} onChange={event => { this.setState({ example: event.target.value }); }}>
+				{Object.keys(example).map(name => <option key={name}>{name}</option>)}
+			</select>
+			<ReactJsonTree data={this.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+			<ReactJsonTree data={this.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
 			<button onClick={() => {
-				var input = clone(this.state.input);
-				var $output = this.r.join(this.state.schema)(input);
+				var input = clone(this.input);
+				var $output = this.r.join(this.schema)(input);
 				$output.progress(() => { this.forceUpdate(); });
 				this.setState({ $output });
 			}}>go</button>
@@ -39,4 +43,28 @@ class Body extends React.Component {
 		function clone(object) { return JSON.parse(JSON.stringify(object)); }
 	}
 }
+var example = {
+	"join singular": {
+		input: 1,
+		schema: 'post'
+	},
+	"join complex": {
+		input: { a: 1, b: [1, 2] },
+		schema: {
+			a: ['post', {
+				userId: "user as user",
+				x: "/x",
+				y: "/y"
+			}],
+			b: [['user', {
+				x: "/x",
+				post: ["/post", ['post']]
+			}]]
+		}
+	},
+	"parse reference": {
+		input: ["post.1", "user.1"],
+		schema: []
+	}
+};
 ReactDOM.render(<Body />, document.getElementById('body'));
