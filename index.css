@@ -1,0 +1,7 @@
+[name=example] {
+	display: flex;
+}
+
+[name=example] > * {
+	flex-grow: 1;
+}
