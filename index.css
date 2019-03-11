@@ -5,3 +5,11 @@
 [name=example] > * {
 	flex-grow: 1;
 }
+
+[name=output] {
+	display: flex;
+}
+
+[name=output] > * {
+	flex-grow: 1;
+}

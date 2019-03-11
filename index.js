@@ -40,11 +40,22 @@ class Body extends React.Component {
 			</div>
 			{
 				this.state.$output &&
+				<div name="output">
 					<ReactJsonTree data={this.state.$output.$} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+					<ReactJsonTree hideRoot data={
+						{
+							pending: this.state.$output.pending
+						}
+					} postprocessValue={value => isPromise(value) ? value.batch : value} getItemString={() => undefined} shouldExpandNode={() => true}>
+					</ReactJsonTree>
+				</div>
 			}
 		</div>;
 		function clone(object) { return JSON.parse(JSON.stringify(object)); }
 	}
+}
+function isPromise(value) {
+	return typeof value == 'object' && typeof value.then == 'function';
 }
 var example = {
 	"join singular": {
