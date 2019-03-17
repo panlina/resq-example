@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import ReactJsonTree from "react-json-tree";
+import solarized from 'react-json-tree/src/themes/solarized';
 import resq from "resq";
 import Memory from "resq/Access.Memory";
 import Delimited from 'resq/Reference.Delimited';
@@ -41,7 +42,7 @@ class Body extends React.Component {
 			{
 				this.state.$output &&
 				<div name="output">
-					<ReactJsonTree data={this.state.$output.$} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+					<ReactJsonTree data={this.state.$output.$} isCustomNode={isPromise} valueRenderer={valueRenderer} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
 					<ReactJsonTree hideRoot data={
 						{
 							pending: this.state.$output.pending
@@ -56,6 +57,11 @@ class Body extends React.Component {
 }
 function isPromise(value) {
 	return typeof value == 'object' && typeof value.then == 'function';
+}
+function valueRenderer(displayValue, value) {
+	if (isPromise(value))
+		return <em style={{ color: solarized.base06 }}>loading..</em>;
+	return value;
 }
 var example = {
 	"join singular": {
