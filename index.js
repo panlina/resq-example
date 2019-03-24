@@ -32,6 +32,15 @@ class Body extends React.Component {
 			<button onClick={() => {
 				var input = clone(this.input);
 				var $output = this.r.join(this.schema)(input);
+				var id = 0;
+				$output.progress(() => {
+					for (var promise of $output.pending) {
+						if (!(ID in promise))
+							promise[ID] = id++;
+						if (!(PROMISE in promise.batch))
+							promise.batch[PROMISE] = promise;
+					}
+				});
 				$output.progress(() => { this.forceUpdate(); });
 				this.setState({ $output });
 			}}>go</button>
@@ -47,7 +56,7 @@ class Body extends React.Component {
 						{
 							pending: this.state.$output.pending
 						}
-					} postprocessValue={value => isPromise(value) ? value.batch : value} getItemString={() => undefined} shouldExpandNode={() => true}>
+					} postprocessValue={value => isPromise(value) ? value.batch : value} getItemString={(type, data) => <span>{this.state.$output.pending.has(data[PROMISE]) ? <sup style={{ color: solarized.base06 }}>{data[PROMISE][ID]}</sup> : undefined}</span>} shouldExpandNode={() => true}>
 					</ReactJsonTree>
 				</div>
 			}
@@ -60,9 +69,11 @@ function isPromise(value) {
 }
 function valueRenderer(displayValue, value) {
 	if (isPromise(value))
-		return <em style={{ color: solarized.base06 }}>loading..</em>;
+		return <em style={{ color: solarized.base06 }}>loading..<sup>{value[ID]}</sup></em>;
 	return value;
 }
+var ID = Symbol();
+var PROMISE = Symbol();
 var example = {
 	"join singular": {
 		input: 1,
