@@ -83,13 +83,13 @@ var example = {
 		input: { a: 1, b: [1, 2] },
 		schema: {
 			a: ['post', {
-				userId: "user as user",
-				x: "/x",
-				y: "/y"
+				user: $this => `/user/${$this.userId}`,
+				x: "./x",
+				y: "./y"
 			}],
 			b: [['user', {
-				x: "/x",
-				post: ["/post", ['post']]
+				x: "./x",
+				post: ["./post", ['post']]
 			}]]
 		}
 	},
