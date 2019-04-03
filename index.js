@@ -46,7 +46,24 @@ class Body extends React.Component {
 			}}>go</button>
 			<div name="example">
 				<ReactJsonTree data={this.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
-				<ReactJsonTree data={this.schema} postprocessValue={value => value instanceof Array && value.length == 2 ? (value[1][ORIGIN] = value, value[1]) : value} getItemString={(type, data) => data[ORIGIN] ? data[ORIGIN][0] : undefined} shouldExpandNode={() => true}></ReactJsonTree>
+				<ReactJsonTree data={this.schema} postprocessValue={
+					value => value instanceof Array && value.length == 2 ?
+						(value[1][ORIGIN] || (value[1][ORIGIN] = []), value[1][ORIGIN].push(value), value[1]) :
+						value instanceof Array && value.length == 1 ?
+							(value[0][ORIGIN] || (value[0][ORIGIN] = []), value[0][ORIGIN].push(value), value[0]) :
+							value
+				} getItemString={
+					(type, data) =>
+						data[ORIGIN] ?
+							data[ORIGIN].reduceRight(
+								(b, a) => a instanceof Array && a.length == 2 ?
+									a[0] :
+									a instanceof Array && a.length == 1 ?
+										`[${b}]` :
+										0,
+								0
+							) : undefined
+				} shouldExpandNode={() => true}></ReactJsonTree>
 			</div>
 			{
 				this.state.$output &&
