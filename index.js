@@ -46,7 +46,7 @@ class Body extends React.Component {
 			}}>go</button>
 			<div name="example">
 				<ReactJsonTree data={this.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
-				<ReactJsonTree data={this.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+				<ReactJsonTree data={this.schema} postprocessValue={value => value instanceof Array && value.length == 2 ? (value[1][ORIGIN] = value, value[1]) : value} getItemString={(type, data) => data[ORIGIN] ? data[ORIGIN][0] : undefined} shouldExpandNode={() => true}></ReactJsonTree>
 			</div>
 			{
 				this.state.$output &&
@@ -72,6 +72,7 @@ function valueRenderer(displayValue, value) {
 		return <em style={{ color: solarized.base06 }}>loading..<sup>{value[ID]}</sup></em>;
 	return value;
 }
+var ORIGIN = Symbol();
 var ID = Symbol();
 var PROMISE = Symbol();
 var example = {
