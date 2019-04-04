@@ -46,7 +46,38 @@ class Body extends React.Component {
 			}}>go</button>
 			<div name="example">
 				<ReactJsonTree data={this.input} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
-				<ReactJsonTree data={this.schema} getItemString={() => undefined} shouldExpandNode={() => true}></ReactJsonTree>
+				<ReactJsonTree data={this.schema} postprocessValue={
+					value => {
+						for (; ;)
+							if (value instanceof Array && value.length == 2) {
+								var origin = value;
+								value = value[1];
+								value[ORIGIN] = origin;
+							} else if (value instanceof Array && value.length <= 1) {
+								var origin = value;
+								value = value[0];
+								if (typeof value == 'string' || value === undefined)
+									value = [value, {}];
+								value[ORIGIN] = origin;
+							} else
+								break;
+						return value;
+					}
+				} getItemString={
+					(type, data) => {
+						var itemString;
+						for (; ;)
+							if (data[ORIGIN] instanceof Array && data[ORIGIN].length == 2) {
+								data = data[ORIGIN];
+								itemString = `${data[0] || ''}${itemString || ''}`;
+							} else if (data[ORIGIN] instanceof Array && data[ORIGIN].length <= 1) {
+								data = data[ORIGIN];
+								itemString = `[${itemString || ''}]`;
+							} else
+								break;
+						return itemString;
+					}
+				} shouldExpandNode={() => true}></ReactJsonTree>
 			</div>
 			{
 				this.state.$output &&
@@ -72,6 +103,7 @@ function valueRenderer(displayValue, value) {
 		return <em style={{ color: solarized.base06 }}>loading..<sup>{value[ID]}</sup></em>;
 	return value;
 }
+var ORIGIN = Symbol();
 var ID = Symbol();
 var PROMISE = Symbol();
 var example = {
