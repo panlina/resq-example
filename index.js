@@ -4,6 +4,7 @@ import ReactJsonTree from "react-json-tree";
 import solarized from 'react-json-tree/src/themes/solarized';
 import resq from "resq";
 import Memory from "resq/Access.Memory";
+import batch from "resq/batch.RelationType";
 import Delimited from 'resq/Reference.Delimited';
 import data from "resq/test/data";
 import "./index.css";
@@ -12,7 +13,7 @@ class Body extends React.Component {
 		super(props);
 		var access = Memory(data, { clone: true });
 		access.get = Delayed(access.get);
-		this.r = resq({ access, reference: Delimited('.') });
+		this.r = resq({ access, batch, reference: Delimited('.') });
 		this.state = {
 			example: Object.keys(example)[0],
 			$output: undefined
